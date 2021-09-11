@@ -1,9 +1,17 @@
 const arrayOfGoods = require('./goods.json');
 
+function isPriceValid(price) {
+  return price[0] === '$' && !Number.isNaN(+price.replace(',', '.').replace('$', ''));
+}
+
 function handleGoods(goods) {
   const filteredArray = goods.filter((good) => {
     const isItemString = typeof good.item === 'string';
-    return isItemString;
+    const isTypeString = typeof good.type === 'string';
+    const isWeightProduct = typeof good.weight === 'number' && isPriceValid(good.pricePerKilo);
+    const isQuantityProduct = typeof good.quantity === 'number' && isPriceValid(good.pricePerItem);
+
+    return isItemString && isTypeString && (isWeightProduct || isQuantityProduct);
   });
 
   const sortedGoods = [...filteredArray].sort((first, second) => (first.item > second.item ? 1 : -1));
@@ -24,7 +32,7 @@ function handleGoods(goods) {
       return apple;
     })
     .map((good) => good.weight)
-    .reduce((acc, val) => acc + val);
+    .reduce((acc, val) => acc + val, 0);
 
   console.log('Apples - ', totalApplesWeight);
 
